@@ -152,6 +152,26 @@
 				<text class="toast-text">{{ toastText }}</text>
 			</view>
 		</view>
+		
+		<view class="door-direction-overlay" v-if="showDoorDirectionPopup" @tap="closeDoorDirectionPopup">
+			<view class="door-direction-content" @tap.stop>
+				<text class="door-direction-title">确定大门朝向</text>
+				<view class="direction-buttons">
+					<view 
+						class="direction-btn" 
+						:class="{ selected: selectedDoorDirection === direction }"
+						v-for="direction in doorDirections" 
+						:key="direction"
+						@tap="selectDoorDirection(direction)"
+					>
+						<text class="direction-btn-text">{{ direction }}</text>
+					</view>
+				</view>
+				<view class="confirm-sitting-btn" :class="{ disabled: !selectedDoorDirection }" @tap="confirmSittingDirection">
+					<text class="confirm-sitting-text">确定坐向</text>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -164,6 +184,9 @@
 				currentDirection: '',
 				showToast: false,
 				toastText: '',
+				showDoorDirectionPopup: false,
+				selectedDoorDirection: '',
+				doorDirections: ['正北', '正东', '正西', '正南', '东北', '西北', '东南', '西南'],
 				roomTypes: [
 					{ name: '大门', icon: '/static/iccc/damen.png' },
 					{ name: '卫生间', icon: '/static/iccc/weishengjian.png' },
@@ -218,6 +241,20 @@
 					})
 					return
 				}
+				this.showDoorDirectionPopup = true
+				this.selectedDoorDirection = ''
+			},
+			closeDoorDirectionPopup() {
+				this.showDoorDirectionPopup = false
+			},
+			selectDoorDirection(direction) {
+				this.selectedDoorDirection = direction
+			},
+			confirmSittingDirection() {
+				if (!this.selectedDoorDirection) {
+					return
+				}
+				this.showDoorDirectionPopup = false
 				uni.showToast({
 					title: '房屋布局已确定',
 					icon: 'success'
@@ -513,5 +550,89 @@
 .toast-text {
 	font-size: 28rpx;
 	color: #fff;
+}
+
+.door-direction-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: flex-end;
+	z-index: 2000;
+}
+
+.door-direction-content {
+	background-color: #faf6f1;
+	width: 100%;
+	border-radius: 32rpx 32rpx 0 0;
+	padding: 43rpx 40rpx;
+	padding-bottom: calc(43rpx + env(safe-area-inset-bottom));
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.door-direction-title {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 43rpx;
+}
+
+.direction-buttons {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 22rpx;
+	width: 100%;
+	margin-bottom: 43rpx;
+}
+
+.direction-btn {
+	background-color: #fff;
+	border-radius: 16rpx;
+	padding: 24rpx 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 2rpx solid #e8d9cf;
+	transition: all 0.3s;
+}
+
+.direction-btn.selected {
+	border-color: #d43d3d;
+	background-color: rgba(212, 61, 61, 0.1);
+}
+
+.direction-btn-text {
+	font-size: 28rpx;
+	color: #333;
+	font-weight: bold;
+}
+
+.confirm-sitting-btn {
+	background: linear-gradient(180deg, #e85a5a 0%, #d43d3d 100%);
+	border-radius: 50rpx;
+	padding: 32rpx 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	box-shadow: 0 8rpx 20rpx rgba(212, 61, 61, 0.3);
+}
+
+.confirm-sitting-btn.disabled {
+	background: #ccc;
+	pointer-events: none;
+	box-shadow: none;
+}
+
+.confirm-sitting-text {
+	font-size: 34rpx;
+	font-weight: bold;
+	color: #fff;
+	letter-spacing: 4rpx;
 }
 </style>

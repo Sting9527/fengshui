@@ -1,0 +1,68 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "勘测"
+      }
+    },
+    {
+      "path": "pages/compass/compass",
+      "style": {
+        "navigationBarTitleText": "罗盘"
+      }
+    },
+    {
+      "path": "pages/calculation/calculation",
+      "style": {
+        "navigationBarTitleText": "测算"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "风水勘景",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "optimization": {
+    "treeShaking": {
+      "enable": true
+    }
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于罗盘定位和地图显示"
+    },
+    "scope.writePhotosAlbum": {
+      "desc": "用于保存照片到相册"
+    }
+  },
+  "requiredBackgroundModes": ["audio"],
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#d43d3d",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "勘测",
+        "iconPath": "static/kance.png",
+        "selectedIconPath": "static/kance.png"
+      },
+      {
+        "pagePath": "pages/compass/compass",
+        "text": "罗盘",
+        "iconPath": "static/luopan-copy.png",
+        "selectedIconPath": "static/luopan-copy.png"
+      },
+      {
+        "pagePath": "pages/calculation/calculation",
+        "text": "测算",
+        "iconPath": "static/baguatu.png",
+        "selectedIconPath": "static/baguatu.png"
+      }
+    ]
+  }
+}

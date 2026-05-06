@@ -65,11 +65,11 @@ export default {
 				{ id: 'lunar', name: '老黄历', icon: '📅' },
 				{ id: 'bazi', name: '八字排盘', icon: '🎴' },
 				{ id: 'yaogua', name: '摇卦占卜', icon: '🔮' },
-				{ id: 'liuyao', name: '六爻测算', icon: '🔯' },
-				{ id: 'qimen', name: '奇门遁甲', icon: '⚡' },
-				{ id: 'yinyuan', name: '姻缘测算', icon: '💑' },
-				{ id: 'qiming', name: '起名测字', icon: '✍️' },
-				{ id: 'caiyun', name: '财运分析', icon: '💰' }
+				// { id: 'liuyao', name: '六爻测算', icon: '🔯' },
+				// { id: 'qimen', name: '奇门遁甲', icon: '⚡' },
+				// { id: 'yinyuan', name: '姻缘测算', icon: '💑' },
+				// { id: 'qiming', name: '起名测字', icon: '✍️' },
+				// { id: 'caiyun', name: '财运分析', icon: '💰' }
 			]
 		};
 	},

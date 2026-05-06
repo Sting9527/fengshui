@@ -826,11 +826,12 @@ export default {
 	color: #6b5344;
 	margin-bottom: 12rpx;
 	font-weight: 500;
+  height: 45rpx;
 }
 
 .input-field {
 	width: 100%;
-	padding: 24rpx;
+	/* padding: 45rpx 24rpx; */
 	background: #fff;
 	border: 2rpx solid #d4c9b0;
 	border-radius: 12rpx;
@@ -848,9 +849,10 @@ export default {
 }
 
 .input-field::placeholder {
-	color: #c4b8a0;
-	font-size: 28rpx;
+	color: #999999;
+	font-size: 30rpx;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+	opacity: 1;
 }
 
 .picker-field {

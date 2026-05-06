@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="mode-background">
-			<image v-if="currentMode === 'default'" class="bg-image" src="/static/lpbj.png" mode="aspectFill"></image>
+			<image v-if="currentMode === 'default'" class="bg-image" src="/pagesA/static/lpbj.png" mode="aspectFill"></image>
 			<map v-else-if="currentMode === 'map'" id="map" class="map-view" :latitude="latitude" :longitude="longitude" :scale="mapScale" :show-location="true" :map-type="2" :markers="markers" :enable-zoom="true" :enable-scroll="true" :enable-rotate="true" :enable-satellite="true" @loaded="onMapLoaded"></map>
 			<view v-if="currentMode === 'map'" class="map-controls">
 				<view class="control-group">
@@ -33,8 +33,8 @@
 				@touchstart="onCompassTouchStart"
 				@touchmove="onCompassTouchMove"
 			></image>
-			<image v-if="currentMode === 'default'" class="overlay-a2" src="/static/a2.png" mode="aspectFit"></image>
-			<image v-if="currentMode === 'default' || currentMode === 'map' || currentMode === 'camera' || currentMode === 'custom'" class="overlay-a3" src="/static/a3.png" mode="aspectFit"></image>
+			<image v-if="currentMode === 'default'" class="overlay-a2" src="/pagesA/static/a2.png" mode="aspectFit"></image>
+			<image v-if="currentMode === 'default' || currentMode === 'map' || currentMode === 'camera' || currentMode === 'custom'" class="overlay-a3" src="/pagesA/static/a3.png" mode="aspectFit"></image>
 			<view class="cross-line horizontal"></view>
 			<view class="cross-line vertical"></view>
 			<view class="pointer-overlay">
@@ -72,23 +72,23 @@
 		
 		<view class="tools-panel">
 			<view class="tool-item" @tap="showModePicker">
-				<image class="tool-icon" src="/static/iccc/moshixuanze.png" mode="aspectFit"></image>
+				<image class="tool-icon" src="/pagesA/static/iccc/moshixuanze.png" mode="aspectFit"></image>
 				<text class="tool-text">模式</text>
 			</view>
 			<view class="tool-item" @tap="toggleLock">
-				<image class="tool-icon" :class="{ 'active': isLocked }" src="/static/iccc/suoding.png" mode="aspectFit"></image>
+				<image class="tool-icon" :class="{ 'active': isLocked }" src="/pagesA/static/iccc/suoding.png" mode="aspectFit"></image>
 				<text class="tool-text">{{ isLocked ? '锁定' : '解锁' }}</text>
 			</view>
 			<view class="tool-item" @tap="changeCompass">
-				<image class="tool-icon" src="/static/iccc/genghuan.png" mode="aspectFit"></image>
+				<image class="tool-icon" src="/pagesA/static/iccc/genghuan.png" mode="aspectFit"></image>
 				<text class="tool-text">换盘</text>
 			</view>
 			<view v-if="currentMode === 'camera'" class="tool-item" @tap="takePhoto">
-				<image class="tool-icon" src="/static/iccc/paizhao.png" mode="aspectFit"></image>
+				<image class="tool-icon" src="/pagesA/static/iccc/paizhao.png" mode="aspectFit"></image>
 				<text class="tool-text">拍照</text>
 			</view>
 			<view v-if="currentMode === 'custom'" class="tool-item" @tap="chooseImage">
-				<image class="tool-icon" src="/static/iccc/xuantu.png" mode="aspectFit"></image>
+				<image class="tool-icon" src="/pagesA/static/iccc/xuantu.png" mode="aspectFit"></image>
 				<text class="tool-text">选图</text>
 			</view>
 		</view>
@@ -136,25 +136,25 @@
 				mapLoaded: false,
 				mapScale: 15,
 				compassImages: [
-					'/static/luopan_1.png',
-					'/static/luopan_2.png',
-					'/static/luopan_3.png',
-					'/static/luopan_4.png',
-					'/static/luopan_5.png',
-					'/static/luopan_10.png',
-					'/static/luopan_20.png',
-					'/static/luopan_21.png',
-					'/static/luopan_22.png',
-					'/static/luopan_23.png',
-					'/static/luopan_25.png',
-					'/static/luopan_27.png',
-					'/static/luopan_28.png',
-					'/static/luopan_29.png'
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_1.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_2.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_3.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_4.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_5.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_10.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_20.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_21.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_22.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_23.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_25.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_27.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_28.png',
+					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_29.png'
 				],
 				mapCompassImages: [
-					'/static/compass/pan-map-yellow.png',
-					'/static/compass/pan-map.png',
-					'/static/compass/pan.png'
+					'/pagesA/static/compass/pan-map-yellow.png',
+					'/pagesA/static/compass/pan-map.png',
+					'/pagesA/static/compass/pan.png'
 				],
 				trigramMap: {
 					'北': '坎', '东北': '艮', '东': '震', '东南': '巽',
@@ -589,7 +589,7 @@
 					id: 1,
 					latitude: lat,
 					longitude: lng,
-					iconPath: '/static/compass/pan-map.png',
+					iconPath: '/pagesA/static/compass/pan-map.png',
 					width: 50,
 					height: 50
 				}]

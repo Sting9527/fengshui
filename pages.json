@@ -19,6 +19,30 @@
       }
     }
   ],
+  "subPackages": [
+    {
+      "root": "pagesA",
+      "pages": [
+        {
+          "path": "list/list",
+          "style": {
+            "navigationBarTitleText": "列表"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pagesB",
+      "pages": [
+        {
+          "path": "c12345678910/c12345678910",
+          "style": {
+            "navigationBarTitleText": "详情"
+          }
+        }
+      ]
+    }
+  ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "风水勘景",

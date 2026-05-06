@@ -834,15 +834,23 @@ export default {
 	background: #fff;
 	border: 2rpx solid #d4c9b0;
 	border-radius: 12rpx;
-	font-size: 28rpx;
+	font-size: 30rpx;
 	color: #333;
 	box-sizing: border-box;
 	transition: all 0.3s ease;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 }
 
 .input-field:focus {
-	border-color: #d43d3d;
-	box-shadow: 0 0 0 4rpx rgba(212, 61, 61, 0.1);
+	border-color: #c43232;
+	box-shadow: 0 0 0 6rpx rgba(196, 50, 50, 0.15);
+	outline: none;
+}
+
+.input-field::placeholder {
+	color: #c4b8a0;
+	font-size: 28rpx;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 }
 
 .picker-field {

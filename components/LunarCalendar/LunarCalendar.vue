@@ -1120,51 +1120,63 @@ export default {
 	display: flex;
 	gap: 16rpx;
 	margin: 0 20rpx;
+	min-height: 280rpx;
 }
 
 .yi-card, .ji-card {
 	flex: 1;
 	background: #fff;
-	border-radius: 12rpx;
+	border-radius: 16rpx;
 	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	min-height: 280rpx;
 }
 
 .card-header {
-	padding: 16rpx;
+	padding: 20rpx;
 	text-align: center;
+	flex-shrink: 0;
 }
 
 .card-header.yi {
-	background: #d43d3d;
+	background: linear-gradient(135deg, #c43232 0%, #a82828 100%);
 }
 
 .card-header.ji {
-	background: #333;
+	background: linear-gradient(135deg, #4a4a4a 0%, #333 100%);
 }
 
 .header-icon {
-	font-size: 32rpx;
+	font-size: 36rpx;
 	color: #fff;
 	font-weight: bold;
 }
 
 .card-content {
-	padding: 16rpx;
+	padding: 20rpx;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8rpx;
+	gap: 10rpx;
+	flex: 1;
+	align-content: flex-start;
 }
 
 .yiji-item {
-	font-size: 24rpx;
+	font-size: 26rpx;
 	color: #5c4033;
-	padding: 6rpx 12rpx;
-	background: #f5f0e6;
-	border-radius: 8rpx;
+	padding: 10rpx 16rpx;
+	background: #faf8f3;
+	border-radius: 10rpx;
+	border: 1rpx solid #e8dcc8;
+	box-sizing: border-box;
+	max-width: calc(50% - 5rpx);
 }
 
 .ji-card .yiji-item {
-	color: #999;
+	color: #6b5344;
+	background: #f5f5f5;
+	border-color: #e0e0e0;
 }
 
 .info-card {

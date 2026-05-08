@@ -2,25 +2,32 @@
 	<view class="container">
 		<view class="mode-background">
 			<image v-if="currentMode === 'default'" class="bg-image" src="/static/lpbj.png" mode="aspectFill"></image>
-			<map v-else-if="currentMode === 'map'" id="map" class="map-view" :latitude="latitude" :longitude="longitude" :scale="mapScale" :show-location="true" :map-type="2" :markers="markers" :enable-zoom="true" :enable-scroll="true" :enable-rotate="true" :enable-satellite="true" @loaded="onMapLoaded"></map>
-			<view v-if="currentMode === 'map'" class="map-controls">
-				<view class="control-group">
-					<view class="control-btn" @tap="zoomIn">
-						<text class="control-icon">+</text>
+			<view v-else-if="currentMode === 'map'" class="map-container">
+				<map id="map" class="map-view" :latitude="latitude" :longitude="longitude" :scale="mapScale" :show-location="true" :map-type="2" :markers="markers" :enable-zoom="true" :enable-scroll="true" :enable-rotate="true" :enable-satellite="true" @loaded="onMapLoaded"></map>
+				<view class="map-controls">
+					<view class="control-group">
+						<view class="control-btn" @tap="zoomIn">
+							<text class="control-icon">+</text>
+						</view>
+						<view class="control-btn" @tap="zoomOut">
+							<text class="control-icon">−</text>
+						</view>
 					</view>
-					<view class="control-btn" @tap="zoomOut">
-						<text class="control-icon">−</text>
+					<view class="control-btn location-btn" @tap="locateMe">
+						<text class="control-icon">◎</text>
 					</view>
-				</view>
-				<view class="control-btn location-btn" @tap="locateMe">
-					<text class="control-icon">◎</text>
 				</view>
 			</view>
 			<camera v-else-if="currentMode === 'camera'" device-position="back" flash="off" class="camera-view" @error="onCameraError"></camera>
 			<view v-else-if="currentMode === 'custom'" class="custom-bg">
-				<image v-if="customImage" class="custom-image" :src="customImage" mode="aspectFill"></image>
-				<view v-else class="custom-placeholder">
-					<text class="placeholder-text">请选择图片</text>
+				<view class="custom-image-container" @touchstart="onCustomImageTouchStart" @touchmove="onCustomImageTouchMove" @touchend="onCustomImageTouchEnd">
+					<image v-if="customImage" class="custom-image" :src="customImage" mode="aspectFit" :style="customImageStyle"></image>
+					<view v-if="!customImage" class="custom-placeholder">
+						<text class="placeholder-text">请选择图片</text>
+					</view>
+				</view>
+				<view v-if="customImage" class="custom-image-hint">
+					<text class="hint-text">双指缩放 / 单指移动</text>
 				</view>
 			</view>
 		</view>
@@ -29,22 +36,21 @@
 			<image 
 				class="compass-image" 
 				:src="currentCompassImage" 
+				:key="imageRefreshKey"
 				mode="aspectFit"
 				:style="{ transform: 'rotate(' + rotation + 'deg)' }"
 				@touchstart="onCompassTouchStart"
 				@touchmove="onCompassTouchMove"
 			></image>
-			<image v-if="currentMode === 'default'" class="overlay-a2" src="/static/a2.png" mode="aspectFit"></image>
-			<image v-if="currentMode === 'default' || currentMode === 'map' || currentMode === 'camera' || currentMode === 'custom'" class="overlay-a3" src="/static/a3.png" mode="aspectFit"></image>
-			<view class="cross-line horizontal"></view>
-			<view class="cross-line vertical"></view>
-			<view class="pointer-overlay">
+			<image v-if="currentMode === 'default'" class="overlay-a2" src="/static/a2.png" mode="aspectFit" :style="{ transform: 'rotate(' + rotation + 'deg)' }"></image>
+			<image v-if="currentMode === 'default' || currentMode === 'map' || currentMode === 'camera' || currentMode === 'custom'" class="overlay-a3" src="/static/a3.png" mode="aspectFit" :style="{ transform: 'rotate(' + rotation + 'deg)' }"></image>
+			<view class="cross-line horizontal" :style="{ transform: 'rotate(' + rotation + 'deg)' }"></view>
+			<view class="cross-line vertical" :style="{ transform: 'rotate(' + rotation + 'deg)' }"></view>
+			<view class="pointer-overlay" :style="{ transform: 'rotate(' + rotation + 'deg)' }">
 				<view class="pointer north"></view>
 				<view class="pointer south"></view>
 				<view class="pointer east"></view>
 				<view class="pointer west"></view>
-				<view class="pointer-connector vertical"></view>
-				<view class="pointer-connector horizontal"></view>
 			</view>
 		</view>
 		
@@ -78,7 +84,7 @@
 			</view>
 			<view class="tool-item" @tap="toggleLock">
 				<image class="tool-icon" :class="{ 'active': isLocked }" src="/static/iccc/suoding.png" mode="aspectFit"></image>
-				<text class="tool-text">{{ isLocked ? '锁定' : '解锁' }}</text>
+				<text class="tool-text">{{ isLocked ? '解锁' : '锁定' }}</text>
 			</view>
 			<view class="tool-item" @tap="changeCompass">
 				<image class="tool-icon" src="/static/iccc/genghuan.png" mode="aspectFit"></image>
@@ -121,6 +127,7 @@
 	export default {
 		data() {
 			return {
+				currentCompassPath: '',
 				rotation: 0,
 				currentDirection: '坐壬向丙',
 				currentAngle: 0,
@@ -133,6 +140,12 @@
 				longitude: 116.4074,
 				latitude: 39.9042,
 				customImage: '',
+				customImageScale: 1,
+				customImageTranslateX: 0,
+				customImageTranslateY: 0,
+				lastTouchDistance: 0,
+				lastTouchCenterX: 0,
+				lastTouchCenterY: 0,
 				markers: [],
 				mapLoaded: false,
 				mapScale: 15,
@@ -153,9 +166,9 @@
 					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_29.png'
 				],
 				mapCompassImages: [
-					'/pagesA/static/compass/pan-map-yellow.png',
-					'/pagesA/static/compass/pan-map.png',
-					'/pagesA/static/compass/pan.png'
+					'/static/compass/pan.png',
+					'/static/compass/pan-map.png',
+					'/static/compass/pan-map-yellow.png'
 				],
 				trigramMap: {
 					'北': '坎', '东北': '艮', '东': '震', '东南': '巽',
@@ -169,20 +182,30 @@
 		},
 		computed: {
 			currentCompassImage() {
-				if (this.currentMode === 'map' || this.currentMode === 'custom') {
-					return this.mapCompassImages[this.currentCompassIndex % this.mapCompassImages.length]
+				return this.currentCompassPath
+			},
+			customImageStyle() {
+				return {
+					transform: `scale(${this.customImageScale}) translate(${this.customImageTranslateX}px, ${this.customImageTranslateY}px)`
 				}
-				return this.compassImages[this.currentCompassIndex]
 			}
 		},
 		onLoad() {
 			this.startCompass()
 			this.getLocation()
+			this.initCompassImage()
 		},
 		onUnload() {
 			this.stopCompass()
 		},
 		methods: {
+			initCompassImage() {
+				if (this.currentMode === 'map' || this.currentMode === 'custom') {
+					this.currentCompassPath = this.mapCompassImages[0] + '?v=' + Date.now()
+				} else {
+					this.currentCompassPath = this.compassImages[0] + '?v=' + Date.now()
+				}
+			},
 			hasWxApi(apiName) {
 				return typeof wx !== 'undefined' && wx[apiName]
 			},
@@ -212,7 +235,7 @@
 					return
 				}
 				this.rotation = 360 - res.direction
-				this.updateDirection((360 - res.direction + 360) % 360)
+				this.updateDirection(res.direction)
 			},
 			updateDirection(angle) {
 				this.currentAngle = Math.round(angle)
@@ -225,23 +248,21 @@
 				return this.trigramMap[directions[index]]
 			},
 			getDirection(angle) {
-				let mountainIndex = angle >= 345 || angle < 15 ? 0 : Math.floor((angle - 15) / 15) + 1
-				let facingMountain = this.mountainsOrder[mountainIndex]
-				let sittingIndex = (mountainIndex + 12) % 24
-				let sittingMountain = this.mountainsOrder[sittingIndex]
-				return '坐' + sittingMountain + '向' + facingMountain
+				const directions = ['北', '东北', '东', '东南', '南', '西南', '西', '西北']
+				const index = Math.floor((angle + 22.5) / 45) % 8
+				return directions[index]
 			},
 			toggleLock() {
 			this.isLocked = !this.isLocked
 			if (this.isLocked) {
 				this.isManual = false
 				uni.showToast({
-					title: '已锁定',
+					title: '已解锁',
 					icon: 'none'
 				})
 			} else {
 				uni.showToast({
-					title: '已解锁',
+					title: '已锁定',
 					icon: 'none'
 				})
 			}
@@ -258,6 +279,8 @@
 					this.checkCameraPermission((authorized) => {
 						if (authorized) {
 							this.currentMode = mode
+							this.currentCompassIndex = 0
+							this.initCompassImage()
 							uni.showToast({
 								title: '已切换为实景取相盘',
 								icon: 'none'
@@ -272,6 +295,8 @@
 					return
 				}
 				this.currentMode = mode
+				this.currentCompassIndex = 0
+				this.initCompassImage()
 				switch (mode) {
 					case 'default':
 						uni.showToast({
@@ -296,8 +321,10 @@
 			changeCompass() {
 				if (this.currentMode === 'map' || this.currentMode === 'custom') {
 					this.currentCompassIndex = (this.currentCompassIndex + 1) % this.mapCompassImages.length
+					this.currentCompassPath = this.mapCompassImages[this.currentCompassIndex % this.mapCompassImages.length] + '?v=' + Date.now()
 				} else {
 					this.currentCompassIndex = (this.currentCompassIndex + 1) % this.compassImages.length
+					this.currentCompassPath = this.compassImages[this.currentCompassIndex] + '?v=' + Date.now()
 				}
 				uni.showToast({
 					title: '已更换罗盘',
@@ -357,6 +384,7 @@
 						
 						if (res.tempFilePaths && res.tempFilePaths.length > 0) {
 							that.customImage = res.tempFilePaths[0]
+							that.resetCustomImage()
 							uni.showToast({
 								title: '图片选择成功',
 								icon: 'success'
@@ -381,12 +409,14 @@
 						
 						if (res.tempFilePaths && res.tempFilePaths.length > 0) {
 							that.customImage = res.tempFilePaths[0]
+							that.resetCustomImage()
 							uni.showToast({
 								title: '图片选择成功',
 								icon: 'success'
 							})
 						} else if (res.tempFilePath) {
 							that.customImage = res.tempFilePath
+							that.resetCustomImage()
 							uni.showToast({
 								title: '图片选择成功',
 								icon: 'success'
@@ -438,6 +468,45 @@
 					title: '相机打开失败',
 					icon: 'none'
 				})
+			},
+			onCustomImageTouchStart(e) {
+				const touches = e.touches
+				if (touches.length === 2) {
+					this.lastTouchDistance = this.getDistance(touches[0], touches[1])
+					this.lastTouchCenterX = (touches[0].clientX + touches[1].clientX) / 2
+					this.lastTouchCenterY = (touches[0].clientY + touches[1].clientY) / 2
+				} else if (touches.length === 1) {
+					this.lastTouchCenterX = touches[0].clientX
+					this.lastTouchCenterY = touches[0].clientY
+				}
+			},
+			onCustomImageTouchMove(e) {
+				const touches = e.touches
+				if (touches.length === 2) {
+					const currentDistance = this.getDistance(touches[0], touches[1])
+					const scale = currentDistance / this.lastTouchDistance
+					this.customImageScale = Math.max(1, Math.min(5, this.customImageScale * scale))
+					this.lastTouchDistance = currentDistance
+				} else if (touches.length === 1) {
+					const deltaX = touches[0].clientX - this.lastTouchCenterX
+					const deltaY = touches[0].clientY - this.lastTouchCenterY
+					this.customImageTranslateX += deltaX
+					this.customImageTranslateY += deltaY
+					this.lastTouchCenterX = touches[0].clientX
+					this.lastTouchCenterY = touches[0].clientY
+				}
+			},
+			onCustomImageTouchEnd(e) {
+			},
+			getDistance(touch1, touch2) {
+				const dx = touch2.clientX - touch1.clientX
+				const dy = touch2.clientY - touch1.clientY
+				return Math.sqrt(dx * dx + dy * dy)
+			},
+			resetCustomImage() {
+				this.customImageScale = 1
+				this.customImageTranslateX = 0
+				this.customImageTranslateY = 0
 			},
 			onCompassTouchStart(e) {
 				if (!this.isLocked) {
@@ -745,6 +814,15 @@
 	height: 100%;
 }
 
+.map-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 0;
+}
+
 .map-view,
 .camera-view {
 	width: 100%;
@@ -758,9 +836,33 @@
 	background-color: #f5f5f5;
 }
 
+.custom-image-container {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
 .custom-image {
 	width: 100%;
 	height: 100%;
+	transition: none;
+	touch-action: none;
+}
+
+.custom-image-hint {
+	position: absolute;
+	bottom: 200rpx;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgba(0, 0, 0, 0.5);
+	padding: 16rpx 32rpx;
+	border-radius: 40rpx;
+	z-index: 5;
+}
+
+.hint-text {
+	font-size: 24rpx;
+	color: #fff;
 }
 
 .custom-placeholder {
@@ -782,12 +884,24 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin-top: 10%;
-	margin-bottom: 5%;
 	margin-left: auto;
 	margin-right: auto;
 	position: relative;
 	z-index: 10;
+}
+
+.compass-wrapper:not(.camera-compass):not(.custom-compass) {
+	margin-top: 10%;
+	margin-bottom: 5%;
+}
+
+.compass-wrapper.camera-compass,
+.compass-wrapper.custom-compass {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	margin: 0;
 }
 
 .compass-bg-layer {
@@ -913,17 +1027,17 @@
 
 .cross-line.horizontal {
 	top: 50%;
-	left: -50%;
-	width: 200%;
+	left: -7%;
+	width: 114%;
 	height: 2rpx;
 	margin-top: -1rpx;
 }
 
 .cross-line.vertical {
-	top: 0;
+	top: -7%;
 	left: 50%;
 	width: 2rpx;
-	height: 100%;
+	height: 114%;
 	margin-left: -1rpx;
 }
 

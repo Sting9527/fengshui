@@ -3,7 +3,7 @@
 		<view class="header-section">
 			<view class="header-bg"></view>
 			<view class="header-content">
-				<text class="header-title">风水勘景</text>
+				<text class="header-title">位置勘景</text>
 				<text class="header-subtitle">选择位置分析布局</text>
 			</view>
 		</view>

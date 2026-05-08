@@ -1,5 +1,5 @@
 {
-    "name" : "风水勘景",
+    "name" : "位置勘景",
     "appid" : "__UNI__157F712",
     "description" : "",
     "versionName" : "1.0.0",
@@ -61,10 +61,10 @@
                 "desc" : "您的位置信息将用于罗盘定位和地图显示"
             },
             "scope.album" : {
-                "desc" : "用于上传图片进行风水勘测"
+                "desc" : "用于上传图片进行位置勘测"
             },
             "scope.camera" : {
-                "desc" : "用于实景取相进行风水勘测"
+                "desc" : "用于实景取相进行位置勘测"
             },
             "scope.writePhotosAlbum" : {
                 "desc" : "用于保存照片到相册"

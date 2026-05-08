@@ -1,7 +1,7 @@
 {
   "name": "fengshui-main",
   "version": "1.0.0",
-  "description": "风水勘景应用",
+  "description": "位置勘景应用",
   "main": "main.js",
   "type": "module",
   "dependencies": {

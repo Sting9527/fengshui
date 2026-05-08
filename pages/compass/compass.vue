@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="mode-background">
-			<image v-if="currentMode === 'default'" class="bg-image" src="/pagesA/static/lpbj.png" mode="aspectFill"></image>
+			<image v-if="currentMode === 'default'" class="bg-image" src="/static/lpbj.png" mode="aspectFill"></image>
 			<map v-else-if="currentMode === 'map'" id="map" class="map-view" :latitude="latitude" :longitude="longitude" :scale="mapScale" :show-location="true" :map-type="2" :markers="markers" :enable-zoom="true" :enable-scroll="true" :enable-rotate="true" :enable-satellite="true" @loaded="onMapLoaded"></map>
 			<view v-if="currentMode === 'map'" class="map-controls">
 				<view class="control-group">
@@ -17,8 +17,9 @@
 				</view>
 			</view>
 			<camera v-else-if="currentMode === 'camera'" device-position="back" flash="off" class="camera-view" @error="onCameraError"></camera>
-			<view v-else-if="currentMode === 'custom'" class="custom-bg" :style="customImage ? { backgroundImage: 'url(' + customImage + ')' } : {}">
-				<view v-if="!customImage" class="custom-placeholder">
+			<view v-else-if="currentMode === 'custom'" class="custom-bg">
+				<image v-if="customImage" class="custom-image" :src="customImage" mode="aspectFill"></image>
+				<view v-else class="custom-placeholder">
 					<text class="placeholder-text">请选择图片</text>
 				</view>
 			</view>
@@ -33,8 +34,8 @@
 				@touchstart="onCompassTouchStart"
 				@touchmove="onCompassTouchMove"
 			></image>
-			<image v-if="currentMode === 'default'" class="overlay-a2" src="/pagesA/static/a2.png" mode="aspectFit"></image>
-			<image v-if="currentMode === 'default' || currentMode === 'map' || currentMode === 'camera' || currentMode === 'custom'" class="overlay-a3" src="/pagesA/static/a3.png" mode="aspectFit"></image>
+			<image v-if="currentMode === 'default'" class="overlay-a2" src="/static/a2.png" mode="aspectFit"></image>
+			<image v-if="currentMode === 'default' || currentMode === 'map' || currentMode === 'camera' || currentMode === 'custom'" class="overlay-a3" src="/static/a3.png" mode="aspectFit"></image>
 			<view class="cross-line horizontal"></view>
 			<view class="cross-line vertical"></view>
 			<view class="pointer-overlay">
@@ -72,23 +73,23 @@
 		
 		<view class="tools-panel">
 			<view class="tool-item" @tap="showModePicker">
-				<image class="tool-icon" src="/pagesA/static/iccc/moshixuanze.png" mode="aspectFit"></image>
+				<image class="tool-icon" src="/static/iccc/moshixuanze.png" mode="aspectFit"></image>
 				<text class="tool-text">模式</text>
 			</view>
 			<view class="tool-item" @tap="toggleLock">
-				<image class="tool-icon" :class="{ 'active': isLocked }" src="/pagesA/static/iccc/suoding.png" mode="aspectFit"></image>
+				<image class="tool-icon" :class="{ 'active': isLocked }" src="/static/iccc/suoding.png" mode="aspectFit"></image>
 				<text class="tool-text">{{ isLocked ? '锁定' : '解锁' }}</text>
 			</view>
 			<view class="tool-item" @tap="changeCompass">
-				<image class="tool-icon" src="/pagesA/static/iccc/genghuan.png" mode="aspectFit"></image>
+				<image class="tool-icon" src="/static/iccc/genghuan.png" mode="aspectFit"></image>
 				<text class="tool-text">换盘</text>
 			</view>
 			<view v-if="currentMode === 'camera'" class="tool-item" @tap="takePhoto">
-				<image class="tool-icon" src="/pagesA/static/iccc/paizhao.png" mode="aspectFit"></image>
+				<image class="tool-icon" src="/static/iccc/paizhao.png" mode="aspectFit"></image>
 				<text class="tool-text">拍照</text>
 			</view>
 			<view v-if="currentMode === 'custom'" class="tool-item" @tap="chooseImage">
-				<image class="tool-icon" src="/pagesA/static/iccc/xuantu.png" mode="aspectFit"></image>
+				<image class="tool-icon" src="/static/iccc/xuantu.png" mode="aspectFit"></image>
 				<text class="tool-text">选图</text>
 			</view>
 		</view>
@@ -126,7 +127,7 @@
 				currentTrigram: '坎',
 				currentCompassIndex: 0,
 				currentMode: 'default',
-				isLocked: true,
+				isLocked: false,
 				isManual: false,
 				showMode: false,
 				longitude: 116.4074,
@@ -231,20 +232,20 @@
 				return '坐' + sittingMountain + '向' + facingMountain
 			},
 			toggleLock() {
-				this.isLocked = !this.isLocked
-				if (this.isLocked) {
-					this.isManual = false
-					uni.showToast({
-						title: '已解锁',
-						icon: 'none'
-					})
-				} else {
-					uni.showToast({
-						title: '已锁定',
-						icon: 'none'
-					})
-				}
-			},
+			this.isLocked = !this.isLocked
+			if (this.isLocked) {
+				this.isManual = false
+				uni.showToast({
+					title: '已锁定',
+					icon: 'none'
+				})
+			} else {
+				uni.showToast({
+					title: '已解锁',
+					icon: 'none'
+				})
+			}
+		},
 			showModePicker() {
 				this.showMode = true
 			},
@@ -253,6 +254,23 @@
 			},
 			selectMode(mode) {
 				this.showMode = false
+				if (mode === 'camera') {
+					this.checkCameraPermission((authorized) => {
+						if (authorized) {
+							this.currentMode = mode
+							uni.showToast({
+								title: '已切换为实景取相盘',
+								icon: 'none'
+							})
+						} else {
+							uni.showToast({
+								title: '请先授权相机权限',
+								icon: 'none'
+							})
+						}
+					})
+					return
+				}
 				this.currentMode = mode
 				switch (mode) {
 					case 'default':
@@ -264,12 +282,6 @@
 					case 'map':
 						uni.showToast({
 							title: '已切换为卫星地图盘',
-							icon: 'none'
-						})
-						break
-					case 'camera':
-						uni.showToast({
-							title: '已切换为实景取相盘',
 							icon: 'none'
 						})
 						break
@@ -520,6 +532,43 @@
 					callback(true)
 				}
 			},
+			checkCameraPermission(callback) {
+				const that = this
+				if (that.hasWxApi('getSetting')) {
+					wx.getSetting({
+						success: function(res) {
+							if (res.authSetting['scope.camera'] === true) {
+								callback(true)
+							} else if (res.authSetting['scope.camera'] === false) {
+								callback(false)
+							} else {
+								that.requestCameraPermission(callback)
+							}
+						},
+						fail: function() {
+							callback(false)
+						}
+					})
+				} else {
+					callback(true)
+				}
+			},
+			requestCameraPermission(callback) {
+				const that = this
+				if (that.hasWxApi('authorize')) {
+					wx.authorize({
+						scope: 'scope.camera',
+						success: function() {
+							callback(true)
+						},
+						fail: function() {
+							callback(false)
+						}
+					})
+				} else {
+					callback(true)
+				}
+			},
 			doGetLocation() {
 				const that = this
 				if (that.hasWxApi('getLocation')) {
@@ -707,9 +756,11 @@
 	width: 100%;
 	height: 100%;
 	background-color: #f5f5f5;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-size: contain;
+}
+
+.custom-image {
+	width: 100%;
+	height: 100%;
 }
 
 .custom-placeholder {

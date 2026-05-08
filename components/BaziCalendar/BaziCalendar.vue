@@ -1,7 +1,7 @@
 <template>
 	<view class="bazi-calendar">
 		<view class="header-section">
-			<text class="page-title">八字排盘</text>
+			<text class="page-title">排盘</text>
 			<text class="page-subtitle">请填写阳历（公历）时间：</text>
 		</view>
 		
@@ -94,7 +94,7 @@
 		
 		<view class="result-section" v-if="showResult">
 			<view class="result-header">
-				<text class="result-title">八字排盘结果</text>
+				<text class="result-title">排盘结果</text>
 			</view>
 			
 			<view class="bazi-display">

@@ -354,14 +354,14 @@
 				showDetail: false,
 				showDetailInfo: false,
 				roomTypes: [
-					{ name: '大门', icon: '/pagesA/static/iccc/damen.png' },
-					{ name: '卫生间', icon: '/pagesA/static/iccc/weishengjian.png' },
-					{ name: '阳台', icon: '/pagesA/static/iccc/yangtai.png' },
-					{ name: '餐厅', icon: '/pagesA/static/iccc/canting.png' },
-					{ name: '厨房', icon: '/pagesA/static/iccc/chufang.png' },
-					{ name: '书房', icon: '/pagesA/static/iccc/caozuo-shufang.png' },
-					{ name: '客厅', icon: '/pagesA/static/iccc/keting.png' },
-					{ name: '卧室', icon: '/pagesA/static/iccc/woshi-4.png' }
+					{ name: '大门', icon: '/static/iccc/damen.png' },
+					{ name: '卫生间', icon: '/static/iccc/weishengjian.png' },
+					{ name: '阳台', icon: '/static/iccc/yangtai.png' },
+					{ name: '餐厅', icon: '/static/iccc/canting.png' },
+					{ name: '厨房', icon: '/static/iccc/chufang.png' },
+					{ name: '书房', icon: '/static/iccc/caozuo-shufang.png' },
+					{ name: '客厅', icon: '/static/iccc/keting.png' },
+					{ name: '卧室', icon: '/static/iccc/woshi-4.png' }
 				],
 				fengshuiData: {
 					'正北': { 

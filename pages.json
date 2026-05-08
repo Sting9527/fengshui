@@ -15,7 +15,7 @@
     {
       "path": "pages/calculation/calculation",
       "style": {
-        "navigationBarTitleText": "测算"
+        "navigationBarTitleText": "工具"
       }
     }
   ],
@@ -83,7 +83,7 @@
       },
       {
         "pagePath": "pages/calculation/calculation",
-        "text": "测算",
+        "text": "工具",
         "iconPath": "static/baguatu.png",
         "selectedIconPath": "static/baguatu.png"
       }

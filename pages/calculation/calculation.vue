@@ -30,10 +30,10 @@
 			<!-- 黄历组件 -->
 			<LunarCalendar v-if="currentModule === 'lunar'" />
 			
-			<!-- 八字排盘组件 -->
+			<!-- 排盘组件 -->
 			<BaziCalendar v-if="currentModule === 'bazi'" />
 			
-			<!-- 摇卦占卜组件 -->
+			<!-- 六爻组件 -->
 			<YaoguaCalendar v-if="currentModule === 'yaogua'" />
 		</view>
 	</view>
@@ -42,7 +42,7 @@
 <script>
 /**
  * 测算页面
- * 包含多个测算模块：黄历、八字排盘、摇卦占卜等
+ * 包含多个测算模块：黄历、排盘、六爻等
  * 通过顶部导航切换不同模块
  */
 import LunarCalendar from '@/components/LunarCalendar/LunarCalendar.vue';
@@ -63,8 +63,8 @@ export default {
 			// 所有功能模块列表
 			modules: [
 				{ id: 'lunar', name: '老黄历', icon: '📅' },
-				{ id: 'bazi', name: '八字排盘', icon: '🎴' },
-				{ id: 'yaogua', name: '摇卦占卜', icon: '🔮' },
+				{ id: 'bazi', name: '排盘', icon: '🎴' },
+				{ id: 'yaogua', name: '六爻', icon: '🔮' },
 				// { id: 'liuyao', name: '六爻测算', icon: '🔯' },
 				// { id: 'qimen', name: '奇门遁甲', icon: '⚡' },
 				// { id: 'yinyuan', name: '姻缘测算', icon: '💑' },

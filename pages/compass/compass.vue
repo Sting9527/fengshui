@@ -90,10 +90,7 @@
 				<image class="tool-icon" src="/static/iccc/genghuan.png" mode="aspectFit"></image>
 				<text class="tool-text">换盘</text>
 			</view>
-			<view v-if="currentMode === 'camera'" class="tool-item" @tap="takePhoto">
-				<image class="tool-icon" src="/static/iccc/paizhao.png" mode="aspectFit"></image>
-				<text class="tool-text">拍照</text>
-			</view>
+
 			<view v-if="currentMode === 'custom'" class="tool-item" @tap="chooseImage">
 				<image class="tool-icon" src="/static/iccc/xuantu.png" mode="aspectFit"></image>
 				<text class="tool-text">选图</text>
@@ -335,21 +332,7 @@
 					duration: 1000
 				})
 			},
-			takePhoto() {
-				const ctx = uni.createCameraContext()
-				ctx.takePhoto({
-					quality: 'high',
-					success: (res) => {
-						this.saveImageToAlbum(res.tempImagePath)
-					},
-					fail: (err) => {
-						uni.showToast({
-							title: '拍照失败',
-							icon: 'none'
-						})
-					}
-				})
-			},
+
 			saveImageToAlbum(imagePath) {
 				uni.saveImageToPhotosAlbum({
 					filePath: imagePath,

@@ -3,7 +3,7 @@
 		<view class="mode-background">
 			<image v-if="currentMode === 'default'" class="bg-image" src="/static/lpbj.png" mode="aspectFill"></image>
 			<view v-else-if="currentMode === 'map'" class="map-container">
-				<map id="map" class="map-view" :latitude="latitude" :longitude="longitude" :scale="mapScale" :show-location="true" :map-type="2" :markers="markers" :enable-zoom="true" :enable-scroll="true" :enable-rotate="true" :enable-satellite="true" @loaded="onMapLoaded"></map>
+				<map id="map" class="map-view" :latitude="latitude" :longitude="longitude" :scale="mapScale" :show-location="false" :map-type="2" :markers="markers" :enable-zoom="true" :enable-scroll="true" :enable-rotate="true" :enable-satellite="true" @loaded="onMapLoaded"></map>
 				<view class="map-controls">
 					<view class="control-group">
 						<view class="control-btn" @tap="zoomIn">
@@ -32,18 +32,18 @@
 			</view>
 		</view>
 		
-		<view class="compass-wrapper" :class="{ 'map-compass': currentMode === 'map', 'custom-compass': currentMode === 'custom', 'camera-compass': currentMode === 'camera' }">
+		<view class="compass-wrapper" :class="{ 'default-compass': currentMode === 'default', 'map-compass': currentMode === 'map', 'custom-compass': currentMode === 'custom', 'camera-compass': currentMode === 'camera' }">
 			<image 
 				class="compass-image" 
 				:src="currentCompassImage" 
-				:key="imageRefreshKey"
+				:key="currentCompassPath"
 				mode="aspectFit"
 				:style="{ transform: 'rotate(' + rotation + 'deg)' }"
 				@touchstart="onCompassTouchStart"
 				@touchmove="onCompassTouchMove"
 			></image>
 			<image v-if="currentMode === 'default'" class="overlay-a2" src="/static/a2.png" mode="aspectFit" :style="{ transform: 'rotate(' + rotation + 'deg)' }"></image>
-			<image v-if="currentMode === 'default' || currentMode === 'map' || currentMode === 'camera' || currentMode === 'custom'" class="overlay-a3" src="/static/a3.png" mode="aspectFit" :style="{ transform: 'rotate(' + rotation + 'deg)' }"></image>
+			<image v-if="currentMode === 'default'" class="overlay-a3" src="/static/a3.png" mode="aspectFit" :style="{ transform: 'rotate(' + rotation + 'deg)' }"></image>
 			<view class="cross-line horizontal" :style="{ transform: 'rotate(' + rotation + 'deg)' }"></view>
 			<view class="cross-line vertical" :style="{ transform: 'rotate(' + rotation + 'deg)' }"></view>
 			<view class="pointer-overlay" :style="{ transform: 'rotate(' + rotation + 'deg)' }">
@@ -127,7 +127,7 @@
 	export default {
 		data() {
 			return {
-				currentCompassPath: '',
+				currentCompassPath: 'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_1.png',
 				rotation: 0,
 				currentDirection: '坐壬向丙',
 				currentAngle: 0,
@@ -148,7 +148,7 @@
 				lastTouchCenterY: 0,
 				markers: [],
 				mapLoaded: false,
-				mapScale: 15,
+				mapScale: 13,
 				compassImages: [
 					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_1.png',
 					'https://mp-35e40d86-4d87-4136-914a-7f594a46009d.cdn.bspapp.com/compass/luopan_2.png',
@@ -200,8 +200,10 @@
 		},
 		methods: {
 			initCompassImage() {
-				if (this.currentMode === 'map' || this.currentMode === 'custom') {
-					this.currentCompassPath = this.mapCompassImages[0] + '?v=' + Date.now()
+				if (this.currentMode === 'map') {
+					this.currentCompassPath = '/static/compass/pan-map.png?v=' + Date.now()
+				} else if (this.currentMode === 'custom') {
+					this.currentCompassPath = '/static/compass/pan.png?v=' + Date.now()
 				} else {
 					this.currentCompassPath = this.compassImages[0] + '?v=' + Date.now()
 				}
@@ -305,6 +307,7 @@
 						})
 						break
 					case 'map':
+						this.getLocation()
 						uni.showToast({
 							title: '已切换为卫星地图盘',
 							icon: 'none'
@@ -337,11 +340,9 @@
 				ctx.takePhoto({
 					quality: 'high',
 					success: (res) => {
-						
 						this.saveImageToAlbum(res.tempImagePath)
 					},
 					fail: (err) => {
-						
 						uni.showToast({
 							title: '拍照失败',
 							icon: 'none'
@@ -572,13 +573,13 @@
 							if (res.authSetting['scope.userLocation'] === true) {
 								callback(true)
 							} else if (res.authSetting['scope.userLocation'] === false) {
-								callback(false)
+								that.requestLocationPermission(callback)
 							} else {
 								that.requestLocationPermission(callback)
 							}
 						},
 						fail: function() {
-							callback(false)
+							that.requestLocationPermission(callback)
 						}
 					})
 				} else {
@@ -703,14 +704,7 @@
 				})
 			},
 			updateMarkers(lat, lng) {
-				this.markers = [{
-					id: 1,
-					latitude: lat,
-					longitude: lng,
-					iconPath: '/pagesA/static/compass/pan-map.png',
-					width: 50,
-					height: 50
-				}]
+				this.markers = []
 			},
 			onMapLoaded() {
 				
@@ -720,12 +714,12 @@
 				}
 			},
 			zoomIn() {
-				if (this.mapScale < 20) {
+				if (this.mapScale < 14) {
 					this.mapScale++
 				}
 			},
 			zoomOut() {
-				if (this.mapScale > 5) {
+				if (this.mapScale > 4) {
 					this.mapScale--
 				}
 			},
@@ -782,8 +776,11 @@
 				})
 			},
 			handleLocationFail() {
+				this.latitude = 39.9042
+				this.longitude = 116.4074
+				this.updateMarkers(this.latitude, this.longitude)
 				uni.showToast({
-					title: '定位失败，请检查权限',
+					title: '定位失败，使用默认位置',
 					icon: 'none'
 				})
 			}
@@ -799,6 +796,8 @@
 	position: relative;
 	overflow: hidden;
 }
+
+
 
 .mode-background {
 	position: absolute;
@@ -890,11 +889,7 @@
 	z-index: 10;
 }
 
-.compass-wrapper:not(.camera-compass):not(.custom-compass) {
-	margin-top: 10%;
-	margin-bottom: 5%;
-}
-
+.compass-wrapper.map-compass,
 .compass-wrapper.camera-compass,
 .compass-wrapper.custom-compass {
 	position: absolute;
@@ -902,6 +897,12 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 	margin: 0;
+}
+
+.compass-wrapper.default-compass {
+	position: relative;
+	margin-top: 10%;
+	margin-bottom: 5%;
 }
 
 .compass-bg-layer {
